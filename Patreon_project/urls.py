@@ -1,5 +1,5 @@
 """
-URL configuration for donation_project project.
+URL configuration for Patreon_project project.
 
 The `urlpatterns` list routes URLs to views. For more information please see:
     https://docs.djangoproject.com/en/5.0/topics/http/urls/
@@ -16,9 +16,12 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from registration.views import register
+from registration.views import userregister #from views.py import userregister function; from registration app
+from login.views import login #from views.py import login function; from login app
+
 
 urlpatterns = [
     path("admin/", admin.site.urls),
-    path('register/', register, name='register')
+    path("register/", userregister, name="register"),
+    path("login/", login, name= "login"), 
 ]

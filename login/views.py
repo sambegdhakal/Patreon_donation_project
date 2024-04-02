@@ -1,0 +1,19 @@
+from django.shortcuts import render
+from django.contrib.auth import authenticate
+from django.http import JsonResponse
+
+def login(request):
+    if request.method == 'POST':
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+        user = authenticate(username=username, password=password)
+        
+        if user is not None:
+            # Login successful
+            return JsonResponse({'message': 'Login successful!'})
+        else:
+            # Login failed
+            return JsonResponse({'error': 'username or password did not match'}, status=400)
+    else:
+        #login page rendered
+        return render(request, 'login.html')
