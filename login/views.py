@@ -10,6 +10,7 @@ def login(request):
         
         if user is not None:
             # Login successful
+            request.session["user"] = username
             return JsonResponse({'message': 'Login successful!'})
         else:
             # Login failed

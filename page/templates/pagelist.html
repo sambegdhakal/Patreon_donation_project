@@ -1,0 +1,28 @@
+<!-- In your app's templates/patreon/page_list.html file -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Patreon Pages</title>
+</head>
+<body>
+    <h1>Patreon Pages</h1>
+    <ul>
+        {% for page in pages %}
+            <li>
+                <h2>{{ page.title }}</h2>
+                <p>Description: {{ page.description }}</p>
+                <p>Goal Amount: ${{ page.goal_amount }}</p>
+                <p>Current Amount: ${{ page.current_amount }}</p>
+                <p>Creator: {{ page.creator.username }}</p>
+                <p>Created at: {{ page.created_at }}</p>
+                <p>Updated at: {{ page.updated_at }}</p>
+            </li>
+        {% empty %}
+            <li>No Patreon pages available.</li>
+        {% endfor %}
+    </ul>
+</body>
+</html>
