@@ -15,10 +15,9 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path
+from django.urls import path, include
 from registration.views import userregister #from views.py import userregister function; from registration app
 from login.views import login #from views.py import login function; from login app
-from page.views import patreon_page_create, patreon_page_list
 
 
 
@@ -26,6 +25,5 @@ urlpatterns = [
     path("admin/", admin.site.urls),
     path("register/", userregister, name="register"),
     path("login/", login, name= "login"), 
-    path("createpage/", patreon_page_create, name= "createpage"), 
-    path("viewpage/", patreon_page_list, name= "patreon_page_list"),
+    path("page/", include("page.urls")),
 ]

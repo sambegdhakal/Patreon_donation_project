@@ -47,10 +47,9 @@ def patreon_page_create(request):
 #             return redirect('patreon_page_list')
 #     return render(request, 'patreon/page_form.html', {'page': page})
 
-# @login_required
-# def patreon_page_delete(request, pk):
-#     page = get_object_or_404(PatreonPage, pk=pk)
-#     if request.method == 'POST':
-#         page.delete()
-#         return redirect('patreon_page_list')
-#     return render(request, 'patreon/page_confirm_delete.html', {'page': page})
+def patreon_page_delete(request, pk):
+    page = get_object_or_404(PatreonPage, pk=pk)
+    if request.method == 'POST':
+        page.delete()
+        return redirect('patreon_page_list')
+    return render(request, 'patreon/page_confirm_delete.html', {'page': page})
