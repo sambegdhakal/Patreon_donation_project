@@ -1,8 +1,9 @@
 # Create your views here.
 from django.shortcuts import render, redirect, get_object_or_404
-from django.contrib.auth.decorators import login_required
 from .models import PatreonPage
 from registration.models import PatreonUser
+from django.http import HttpResponseRedirect
+from django.contrib import messages
 
 
 def patreon_page_list(request):
@@ -29,27 +30,29 @@ def patreon_page_create(request):
                 goal_amount=goal_amount,
                 creator=user
             )
-            return redirect('patreon_page_list')
+            return HttpResponseRedirect("/page/viewpage")
     return render(request, 'createpage.html')
 
-# @login_required
-# def patreon_page_update(request, pk):
-#     page = get_object_or_404(PatreonPage, pk=pk)
-#     if request.method == 'POST':
-#         title = request.POST.get('title')
-#         description = request.POST.get('description')
-#         goal_amount = request.POST.get('goal_amount')
-#         if title and description and goal_amount:
-#             page.title = title
-#             page.description = description
-#             page.goal_amount = goal_amount
-#             page.save()
-#             return redirect('patreon_page_list')
-#     return render(request, 'patreon/page_form.html', {'page': page})
-
-def patreon_page_delete(request, pk):
-    page = get_object_or_404(PatreonPage, pk=pk)
+def patreon_page_update(request, id):
+    page = PatreonPage.objects.get(id=id)
     if request.method == 'POST':
+        title = request.POST.get('title')
+        description = request.POST.get('description')
+        goal_amount = request.POST.get('goal_amount')
+        if title and description and goal_amount:
+            page.title = title
+            page.description = description
+            page.goal_amount = goal_amount
+            page.save()
+            messages.success(request, 'Page updated successfully!')
+            return HttpResponseRedirect("/page/viewpage")
+        else:
+            messages.error(request, 'Please fill in all fields.')
+    return render(request, 'updatepage.html', {'page': page})
+
+def patreon_page_delete(request, id):
+    if request.method == 'POST':
+        page = get_object_or_404(PatreonPage, pk=id)
         page.delete()
-        return redirect('patreon_page_list')
+        return HttpResponseRedirect("/page/viewpage")
     return render(request, 'patreon/page_confirm_delete.html', {'page': page})

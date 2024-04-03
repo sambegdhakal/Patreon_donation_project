@@ -19,10 +19,12 @@
                 <p>Creator: {{ page.creator.username }}</p>
                 <p>Created at: {{ page.created_at }}</p>
                 <p>Updated at: {{ page.updated_at }}</p>
-                <form action="/delete/{{ page.id }}" method="post">
+                <form action="../../page/deletepage/{{ page.id }}/" method="post">
+                    {% csrf_token %}
                     <button type="submit">Delete</button>
                 </form>
-                <form action="/update/{{ page.id }}" method="get">
+                <form action="../../page/updatepage/{{ page.id }}/" method="get">
+                    {% csrf_token %}
                     <button type="submit">Update</button>
                 </form>
             </li>
