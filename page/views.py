@@ -4,12 +4,13 @@ from .models import PatreonPage
 from registration.models import PatreonUser
 from django.http import HttpResponseRedirect
 from django.contrib import messages
+from django.http import JsonResponse
 
 
 def patreon_page_list(request):
     user = PatreonUser.objects.get(username = request.session["user"])
     pages = PatreonPage.objects.filter(creator=user)
-    return render(request, 'pagelist.html', {'pages':pages})
+    return JsonResponse({'pages':pages})
 
 # @login_required
 # def patreon_page_detail(request, pk):
