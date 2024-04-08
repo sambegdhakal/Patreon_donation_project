@@ -1,7 +1,9 @@
 from django.shortcuts import render
 from django.http import JsonResponse
 from .models import PatreonUser
+from django.views.decorators.csrf import csrf_exempt
 
+@csrf_exempt
 def userregister(request):
     if request.method == 'POST':
         first_name = request.POST.get('first_name')
