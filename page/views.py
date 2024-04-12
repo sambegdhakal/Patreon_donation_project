@@ -64,3 +64,14 @@ def patreon_page_delete(request, id):
         page.delete()
         return JsonResponse({'id':id ,'msg':"deleted"})
     return render(request, 'patreon/page_confirm_delete.html', {'page': page})
+
+@csrf_exempt
+def patreon_page_donation(request, id):
+    if request.method == 'POST':
+        # i need the curent logged in user, to save to donated by
+        page = PatreonPage.objects.get(id=id)
+        donation_amount = request.POST.get('donation_amt')
+        page.donation = donation_amount
+        page.save()
+        return JsonResponse({'pageid':id ,'msg':"donation updated"})
+    return render(request, 'patreon/page_confirm_delete.html', {'page': page})
