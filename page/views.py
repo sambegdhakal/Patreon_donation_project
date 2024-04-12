@@ -73,5 +73,6 @@ def patreon_page_donation(request, id):
         donation_amount = request.POST.get('donation_amt')
         page.donation = donation_amount
         page.save()
+        response["Access-Control-Allow-Origin"] = "http://localhost:3000"
         return JsonResponse({'pageid':id ,'msg':"donation updated"})
     return render(request, 'patreon/page_confirm_delete.html', {'page': page})
