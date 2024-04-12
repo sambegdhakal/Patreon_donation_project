@@ -8,6 +8,7 @@ def userregister(request):
         password = request.POST.get('password')
         if PatreonUser.objects.filter(username=username).exists():
             response= JsonResponse({'error': 'Username already exists.'}, status=400)
+            response["Access-Control-Allow-Origin"] = "http://localhost:3000"
             return response
         else:
             new_user = PatreonUser.objects.create(username=username, password=password)
@@ -15,4 +16,4 @@ def userregister(request):
             response["Access-Control-Allow-Origin"] = "http://localhost:3000"
             return response
     #else:
-        #return render(request, 'register.html') 
+        #return render(request, 'register.html')

@@ -12,6 +12,3 @@ class PatreonUser(AbstractUser):
         self.password = make_password(self.password)
         super().save(*args, **kwargs)
 
-# Specify unique related_name arguments for the conflicting fields
-PatreonUser._meta.get_field('groups').remote_field.related_name = 'patreon_user_groups'
-PatreonUser._meta.get_field('user_permissions').remote_field.related_name = 'patreon_user_permissions'

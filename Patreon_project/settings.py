@@ -84,7 +84,7 @@ DATABASES = {
 
 
 # Specify the custom user model
-#AUTH_USER_MODEL = 'registration.PatreonUser'
+AUTH_USER_MODEL = 'registration.PatreonUser'
 
 #database log information
 LOGGING = {

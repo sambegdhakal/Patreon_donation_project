@@ -10,10 +10,14 @@ def login(request):
         
         if user is not None:
             # Login successful
-            return JsonResponse({'message': 'Login successful!'})
+            response= JsonResponse({'message': 'Login successful!', 'username': user.username, 'userid': int(user.userid)})
+            response["Access-Control-Allow-Origin"] = "http://localhost:3000"
+            return response
         else:
             # Login failed
-            return JsonResponse({'error': 'username or password did not match'}, status=400)
-    else:
+            response= JsonResponse({'error': 'username or password did not match'}, status=400)
+            response["Access-Control-Allow-Origin"] = "http://localhost:3000"
+            return response
+    #else:
         #login page rendered
-        return render(request, 'login.html')
+        #return render(request, 'login.html')
