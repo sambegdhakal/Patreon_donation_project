@@ -11,6 +11,7 @@ class PatreonPage(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     donatedBy = models.ForeignKey(PatreonUser, on_delete=models.CASCADE, related_name='fk_2', null=True)
+    # image = models.ImageField(upload_to='images/')
 
     def __str__(self):
         return self.title
