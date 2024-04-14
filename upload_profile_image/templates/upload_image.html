@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upload Image</title>
+</head>
+<body>
+    <h1>Upload Image</h1>
+    <form action="/upload/" method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <input type="hidden" name="user_id" value="{{ user_id }}">
+        <input type="hidden" name="image_id" value="{{ image_id }}">
+        <div>
+            <label for="image">Choose Image:</label>
+            <input type="file" id="image" name="image" accept="image/*" required>
+        </div>
+	<div>
+   	   <label for="user_id">User ID:</label>
+    	   <input type="text" id="user_id" name="user_id" required>
+	</div>
+        <button type="submit">Upload</button>
+    </form>
+</body>
+</html>
