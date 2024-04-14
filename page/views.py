@@ -11,7 +11,7 @@ from django.views.decorators.csrf import csrf_exempt
 def patreon_page_list(request, userid):
     user = PatreonUser.objects.get(userid=userid)
     pages = PatreonPage.objects.filter(creator=user)
-    data = [{'id': page.id, 'description': page.description, 'goal_amount': page.goal_amount, 'creator_username': page.creator.username, 'current_amount': page.current_amount, 'donated_by_user_id':page.donatedBy} for page in pages]
+    data = [{'id': page.id, 'description': page.description, 'goal_amount': page.goal_amount, 'creator_username': page.creator.username, 'current_amount': page.current_amount, 'donated_by_user_id':page.donatedBy, 'image': page.image.url} for page in pages]
     response = JsonResponse(data, safe=False)
     response["Access-Control-Allow-Origin"] = "http://localhost:3000"
     return response
@@ -23,13 +23,15 @@ def patreon_page_create(request, userid):
         title = request.POST.get('title')
         description = request.POST.get('description')
         goal_amount = request.POST.get('goal_amount')
+        image = request.FILES['image']
         user = PatreonUser.objects.get(userid=userid)
         if title and description and goal_amount:
             page = PatreonPage.objects.create(
                 title=title,
                 description=description,
                 goal_amount=goal_amount,
-                creator=user)
+                creator=user,
+                image=image)
             data = [{'creatorid': page.creator.userid, 'description': page.description, 'goal_amount': page.goal_amount, 'creator_username': page.creator.username, 'current_amount': page.current_amount}]
             response = JsonResponse(data,safe=False)
             response["Access-Control-Allow-Origin"] = "http://localhost:3000"

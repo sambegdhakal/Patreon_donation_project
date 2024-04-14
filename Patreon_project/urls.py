@@ -18,12 +18,12 @@ from django.contrib import admin
 from django.urls import path, include
 from registration.views import userregister #from views.py import userregister function; from registration app
 from login.views import login #from views.py import login function; from login app
-
-
+from django.conf.urls.static import static
+from django.conf import settings
 
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("register/", userregister, name="register"),
     path("login/", login, name= "login"), 
     path("page/", include("page.urls")),
-]
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
