@@ -16,10 +16,6 @@ def patreon_page_list(request, userid):
     response["Access-Control-Allow-Origin"] = "http://localhost:3000"
     return response
 
-# @login_required
-# def patreon_page_detail(request, pk):
-#     page = get_object_or_404(PatreonPage, pk=pk)
-#     return render(request, 'patreon/page_detail.html', {'page': page})
 
 @csrf_exempt
 def patreon_page_create(request, userid):
