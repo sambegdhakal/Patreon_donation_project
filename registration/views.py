@@ -6,15 +6,16 @@ from django.views.decorators.csrf import csrf_exempt
 @csrf_exempt
 def userregister(request):
     if request.method == 'POST':
-        first_name = request.POST.get('first_name')
-        last_name = request.POST.get('last_name')
-        email = request.POST.get('email')
         username = request.POST.get('username')
         password = request.POST.get('password')
         if PatreonUser.objects.filter(username=username).exists():
-            return JsonResponse({'error': 'Username already exists.'}, status=400)
+            response= JsonResponse({'error': 'Username already exists.'}, status=400)
+            response["Access-Control-Allow-Origin"] = "http://localhost:3000"
+            return response
         else:
-            new_user = PatreonUser.objects.create(username=username, password=password, first_name=first_name, last_name=last_name, email=email)
-            return JsonResponse({'message': 'User registered successfully!'})
-    else:
-        return render(request, 'register.html') #name should match the html file name
+            new_user = PatreonUser.objects.create(username=username, password=password)
+            response= JsonResponse({'message': 'User registered successfully!', 'username': new_user.username, 'userid': int(new_user.userid)})
+            response["Access-Control-Allow-Origin"] = "http://localhost:3000"
+            return response
+    #else:
+        #return render(request, 'register.html')
