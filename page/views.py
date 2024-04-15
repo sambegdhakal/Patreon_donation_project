@@ -50,11 +50,12 @@ def patreon_page_update(request, id):
             page.description = description
             page.goal_amount = goal_amount
             page.save()
-            messages.success(request, 'Page updated successfully!')
-            return JsonResponse({'msg':"page updated succesfully"})
+            data = {'creatorid': page.creator.userid, 'description': page.description, 'goal_amount': page.goal_amount, 'creator_username': page.creator.username, 'current_amount': page.current_amount}
+            response = JsonResponse(data,safe=False)
+            response["Access-Control-Allow-Origin"] = "http://localhost:3000"
+            return response
         else:
-            messages.error(request, 'Please fill in all fields.')
-            return JsonResponse({'msg':"please fill all the fields"})
+            return JsonResponse({'msg':"page update failed"})
     return render(request, 'updatepage.html', {'page': page})
 
 @csrf_exempt
@@ -62,7 +63,9 @@ def patreon_page_delete(request, id):
     if request.method == 'POST':
         page = get_object_or_404(PatreonPage, pk=id)
         page.delete()
-        return JsonResponse({'id':id ,'msg':"deleted"})
+        response= JsonResponse({'id':id ,'msg':"deleted"})
+        response["Access-Control-Allow-Origin"] = "http://localhost:3000"
+        return response
     return render(request, 'patreon/page_confirm_delete.html', {'page': page})
 
 @csrf_exempt
