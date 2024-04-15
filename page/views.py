@@ -11,7 +11,7 @@ from django.views.decorators.csrf import csrf_exempt
 def patreon_page_list(request, userid):
     user = PatreonUser.objects.get(userid=userid)
     pages = PatreonPage.objects.filter(creator=user)
-    data = [{'id': page.id, 'description': page.description, 'goal_amount': page.goal_amount, 'creator_username': page.creator.username, 'current_amount': page.current_amount, 'donated_by_user_id':page.donatedBy, 'image': page.image.url} for page in pages]
+    data = [{'id': page.id, 'description': page.description, 'goal_amount': page.goal_amount, 'creator_username': page.creator.username, 'current_amount': page.current_amount, 'image': page.image.url} for page in pages]
     response = JsonResponse(data, safe=False)
     response["Access-Control-Allow-Origin"] = "http://localhost:3000"
     return response
@@ -71,7 +71,7 @@ def patreon_page_donation(request, id, userid):
         page = PatreonPage.objects.get(id=id)
         donation_amount = request.POST.get('donation_amt')
         page.current_amount = page.current_amount + int(donation_amount)
-        page.donatedBy = userid
+        page.donatedBy = PatreonUser.objects.get(userid=userid)
         page.save()
         response = JsonResponse({'pageid':id ,'msg':"donation updated"})
         response["Access-Control-Allow-Origin"] = "http://localhost:3000"
