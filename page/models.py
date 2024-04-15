@@ -10,7 +10,6 @@ class PatreonPage(models.Model):
     current_amount = models.DecimalField(max_digits=10, decimal_places=2, default=0)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-    donatedBy = models.ForeignKey(PatreonUser, on_delete=models.CASCADE, related_name='fk_2', null=True)
     image = models.ImageField(upload_to='images/page', null=True)
 
     def __str__(self):
