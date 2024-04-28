@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Patreon Page List</title>
+</head>
+<body>
+    <h1>Patreon Pages</h1>
+    <form method="get" action="{% url 'patreon_page_list' %}">
+        <label for="userid">User ID:</label>
+        <input type="text" id="userid" name="userid">
+        <button type="submit">Search</button>
+    </form>
+
+    <ul>
+        {% for page in pages %}
+        <li>
+            <h2>{{ page.title }}</h2>
+            <p>{{ page.description }}</p>
+            <p>Goal Amount: {{ page.goal_amount }}</p>
+            <p>Creator Username: {{ page.creator_username }}</p>
+            <p>Current Amount: {{ page.current_amount }}</p>
+            <img src="{{ page.image }}" alt="Page Image">
+            <!-- Add more details or formatting as needed -->
+        </li>
+        {% endfor %}
+    </ul>
+</body>
+</html>
