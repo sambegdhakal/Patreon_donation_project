@@ -10,6 +10,7 @@ class PatreonPage(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     image = models.ImageField(upload_to='images/page', null=True)
+    subscriber_count = models.IntegerField(default=0)
 
     def __str__(self):
         return self.title

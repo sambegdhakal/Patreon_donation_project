@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Subscribe to Page</title>
+</head>
+<body>
+    <h1>Subscribe to Page</h1>
+    <form id="subscribe-form" method="post">
+        {% csrf_token %}
+        <input type="hidden" name="page_id" value="{{ page_id }}">
+        <button type="submit">Subscribe_test</button>
+    </form>
+</body>
+</html>

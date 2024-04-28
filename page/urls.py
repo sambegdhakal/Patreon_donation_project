@@ -8,4 +8,5 @@ urlpatterns = [
     path("deletepage/<int:id>/", views.patreon_page_delete, name= "patreon_page_delete"),
     path("updatepage/<int:id>/", views.patreon_page_update, name= "patreon_page_update"),
     path("pagedonation/<int:id>/<int:userid>/", views.patreon_page_donation, name= "patreon_page_donation"),
+    path("subscribe/<int:id>/<int:userid>/", views.subscribe_to_page, name= "patreon_page_subscribe"),
 ]
