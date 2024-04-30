@@ -1,86 +1,165 @@
-# Create your views here.
-from django.shortcuts import render, redirect, get_object_or_404
 from .models import PatreonPage
 from registration.models import PatreonUser
-from django.http import JsonResponse
-from django.views.decorators.csrf import csrf_exempt
+from images.models import Image
+from django.http import JsonResponse, HttpResponseNotAllowed, HttpResponse, HttpResponseNotFound
 
 
-def patreon_page_list(request, username):
-    user = PatreonUser.objects.get(username=username)
-    pages = PatreonPage.objects.filter(creator=user)
-    data = [{'id': page.id, 'title':page.title, 'description': page.description, 'creator_username': page.creator.username, 'current_amount': page.current_amount,'image': page.image.url}
-            for page in pages]
-    response = JsonResponse(data, safe=False)
-    response["Access-Control-Allow-Origin"] = "http://localhost:3000"
-    return response
+"""
+Given a user's ID, return their associated donation page or 404
 
+Returns: {
+    'id': integer, 
+    'title': string, 
+    'description': string, 
+    'creator_username': string, 
+    ###'image': page.image.url
+}
+"""
+def patreon_page_list(request, id):
+    if (request.method != "GET"):
+        return HttpResponseNotAllowed(["GET"])
+    
+    user = PatreonUser.objects.get(userid=id)
+    try:
+        page = PatreonPage.objects.get(creator=user)
 
-@csrf_exempt
+        data = {
+            'id': page.id, 
+            'title': page.title, 
+            'description': page.description, 
+            'creator_username': page.creator.username, 
+            'imageid': page.banner_image.id
+        }
+        
+        return JsonResponse(data, safe=False)
+    except PatreonPage.DoesNotExist:
+        return HttpResponseNotFound()
+    
+
+"""
+Given a user's ID, creates a donation page for them with JSON
+whose fields are defined as: {
+    title: string
+    description: string
+    image: file
+}
+
+Returns: {
+    'id': integer, 
+    'title': string, 
+    'description': string, 
+    'creator_username': string, 
+    'imageid: integer'
+}
+
+Returns 409 if an associated page already exists
+"""
 def patreon_page_create(request, userid):
-    if request.method == 'POST':
-        title = request.POST.get('title')
-        description = request.POST.get('description')
-        image = request.FILES['image']
-        user = PatreonUser.objects.get(userid=userid)
-        if title and description:
-            page = PatreonPage.objects.create(
-                title=title,
-                description=description,
-                creator=user,
-                image=image)
-            data = [{'creatorid': page.creator.userid, 'description': page.description, 'creator_username': page.creator.username,
-                     'current_amount': page.current_amount, 'pageid': page.id}]
-            response = JsonResponse(data,safe=False)
-            response["Access-Control-Allow-Origin"] = "http://localhost:3000"
-            return response
+    if (request.method != "POST"):
+        return HttpResponseNotAllowed(["POST"])
+    
+    user = PatreonUser.objects.get(userid=userid)
+    # check to see if the user already has a donation page
+    try:
+        PatreonPage.objects.get(creator=user)
+        # 409 -- conflict
+        return HttpResponse(status=409)
+    except PatreonPage.DoesNotExist:
+        pass
+    
+    title = request.POST.get('title')
+    description = request.POST.get('description')
+    image = Image.objects.create(
+        image_file=request.FILES["image"]
+    )
 
-@csrf_exempt
+    page = PatreonPage.objects.create(
+        title=title,
+        description=description,
+        creator=user,
+        banner_image=image
+    )
+    
+    data = {
+        'id': page.id, 
+        'title': page.title, 
+        'description': page.description, 
+        'creator_username': page.creator.username, 
+        'imageid': image.id
+    }
+    return JsonResponse(data, safe=False)
+
+
+"""
+Given a donation page ID, updates that donation page with JSON
+defined as: {
+    title: string,
+    description: string
+}
+
+Any number of those fields can be absent
+
+Returns status 200 if successful
+"""
 def patreon_page_update(request, id):
+    if request.method != "POST":
+        return HttpResponseNotAllowed(["POST"])
+    
     page = PatreonPage.objects.get(id=id)
-    if request.method == 'POST':
-        title = request.POST.get('title')
-        description = request.POST.get('description')
-        if title and description:
-            page.title = title
-            page.description = description
-            page.save()
-            data = {'creatorid': page.creator.userid, 'description': page.description, 'creator_username': page.creator.username,
-                    'current_amount': page.current_amount, 'pageid': page.id}
-            response = JsonResponse(data,safe=False)
-            response["Access-Control-Allow-Origin"] = "http://localhost:3000"
-            return response
-        else:
-            return JsonResponse({'msg':"page update failed"})
+    title = request.POST.get('title')
+    description = request.POST.get('description')
+    
+    newImage = None
+    try:
+        image = request.FILES["image"]
+        newImage = Image.objects.create(
+            image_file=image
+        )
+    except:
+        pass
 
-@csrf_exempt
+    if title: 
+        page.title = title
+    if description: 
+        page.description = description
+    if newImage:
+        page.banner_image = newImage
+    page.save()
+
+    return HttpResponse()
+
+
+"""
+Given a user's ID, tries to delete their associated donation page
+
+Returns status 200 if successful
+"""
 def patreon_page_delete(request, id):
-    if request.method == 'POST':
-        page = get_object_or_404(PatreonPage, pk=id)
-        page.delete()
-        response= JsonResponse({'id':id ,'msg':"deleted"})
-        response["Access-Control-Allow-Origin"] = "http://localhost:3000"
-        return response
+    if request.method != 'DELETE':
+        return HttpResponseNotAllowed(["DELETE"])
+    
+    PatreonPage.objects.get(id=id).delete()
+    return HttpResponse()
 
-@csrf_exempt
-def patreon_page_donation(request, id, userid):
-    if request.method == 'POST':
-        page = PatreonPage.objects.get(id=id)
-        donation_amount = request.POST.get('donation_amt')
-        page.current_amount = page.current_amount + int(donation_amount)
-        page.save()
-        user = PatreonUser.objects.get(userid=userid)
-        response = JsonResponse({'pageid':id ,'msg':"donation updated"})
-        response["Access-Control-Allow-Origin"] = "http://localhost:3000"
-        return response
 
-@csrf_exempt
-def subscribe_to_page(request, id, userid):
-    if request.method == 'POST':
-        page = PatreonPage.objects.get(id=id)
-        page.subscriber_count += 1
-        page.save()
-        user = PatreonUser.objects.get(userid=userid)
-        response = JsonResponse({'pageid':id ,'msg':"Subscribed"})
-        response["Access-Control-Allow-Origin"] = "http://localhost:3000"
-        return response
+def patreon_page_donation(request, pageid, userid):
+    if request.method != "POST":
+        return HttpResponseNotAllowed(["POST"])
+    
+    page = PatreonPage.objects.get(id=pageid)
+    donation_amount = request.POST.get('donation_amt')
+    page.current_amount = page.current_amount + int(donation_amount)
+    page.save()
+
+    return HttpResponse()
+
+
+def subscribe_to_page(request, pageid, userid):
+    if request.method != "POST":
+        return HttpResponseNotAllowed(["POST"])
+
+    page = PatreonPage.objects.get(id=pageid)
+    page.subscriber_count += 1
+    page.save()
+
+    return HttpResponse()

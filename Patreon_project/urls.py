@@ -26,4 +26,5 @@ urlpatterns = [
     path("register/", userregister, name="register"),
     path("login/", login, name= "login"), 
     path("page/", include("page.urls")),
+    path("image/", include("images.urls"))
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
