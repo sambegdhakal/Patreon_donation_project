@@ -16,7 +16,9 @@ def patreon_page_list(request, username):
     return response
 
 
+
 @csrf_exempt
+
 def patreon_page_create(request, userid):
     if request.method == 'POST':
         title = request.POST.get('title')
@@ -34,7 +36,24 @@ def patreon_page_create(request, userid):
             response = JsonResponse(data,safe=False)
             response["Access-Control-Allow-Origin"] = "http://localhost:3000"
             return response
-
+"""
+def patreon_page_create(request, userid):
+    if request.method == 'POST':
+        title = request.POST.get('title')
+        description = request.POST.get('description')
+        user = PatreonUser.objects.get(userid=userid)
+        if title and description:
+            page = PatreonPage.objects.create(
+                title=title,
+                description=description,
+                creator=user)
+            data = [{'creatorid': page.creator.userid, 'description': page.description, 'creator_username': page.creator.username,
+                     'current_amount': page.current_amount, 'pageid': page.id}]
+            response = JsonResponse(data,safe=False)
+            response["Access-Control-Allow-Origin"] = "http://localhost:3000"
+            return response
+    return render(request, 'createpage.html')
+"""
 @csrf_exempt
 def patreon_page_update(request, id):
     page = PatreonPage.objects.get(id=id)
