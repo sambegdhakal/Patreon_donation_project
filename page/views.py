@@ -81,17 +81,6 @@ def patreon_page_delete(request, id):
         response["Access-Control-Allow-Origin"] = "http://localhost:3000"
         return response
 
-@csrf_exempt
-def patreon_page_donation(request, id, userid):
-    if request.method == 'POST':
-        page = PatreonPage.objects.get(id=id)
-        donation_amount = request.POST.get('donation_amt')
-        page.current_amount = page.current_amount + int(donation_amount)
-        page.save()
-        user = PatreonUser.objects.get(userid=userid)
-        response = JsonResponse({'pageid':id ,'msg':"donation updated"})
-        response["Access-Control-Allow-Origin"] = "http://localhost:3000"
-        return response
 
 @csrf_exempt
 def subscribe_to_page(request, id, userid):
