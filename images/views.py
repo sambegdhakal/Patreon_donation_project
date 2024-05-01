@@ -20,7 +20,7 @@ def get_image(request, imageid):
 
             return HttpResponse(image_data, content_type=f"image/{file_extension}") 
     except Image.DoesNotExist:
-        raise HttpResponseNotFound()
+        return HttpResponseNotFound()
 
 
 """

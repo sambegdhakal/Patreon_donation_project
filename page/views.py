@@ -12,7 +12,8 @@ Returns: {
     'title': string, 
     'description': string, 
     'creator_username': string, 
-    ###'image': page.image.url
+    'imageid': integer,
+    'creator_profile_id': integer
 }
 """
 def patreon_page_list(request, id):
@@ -28,7 +29,8 @@ def patreon_page_list(request, id):
             'title': page.title, 
             'description': page.description, 
             'creator_username': page.creator.username, 
-            'imageid': page.banner_image.id
+            'imageid': page.banner_image.id,
+            'creator_profile_id': page.creator.profile_image.id
         }
         
         return JsonResponse(data, safe=False)
@@ -49,7 +51,8 @@ Returns: {
     'title': string, 
     'description': string, 
     'creator_username': string, 
-    'imageid: integer'
+    'imageid: integer',
+    'creator_profile_id': integer
 }
 
 Returns 409 if an associated page already exists
@@ -85,7 +88,8 @@ def patreon_page_create(request, userid):
         'title': page.title, 
         'description': page.description, 
         'creator_username': page.creator.username, 
-        'imageid': image.id
+        'imageid': image.id,
+        'creator_profile_id': page.creator.profile_image.id
     }
     return JsonResponse(data, safe=False)
 
