@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Donate</title>
+</head>
+<body>
+    <h2>Donate</h2>
+    <form id="donationForm" method="post">
+        {% csrf_token %}
+        <label for="donation_amt">Please Donation Amount:</label><br>
+        <input type="number" id="donation_amt" name="donation_amt" required><br>
+        <input type="hidden" id="userid" name="userid" value="{{ userid }}">
+        <input type="hidden" id="pageid" name="pageid" value="{{ pageid }}">
+        <button type="submit">Submit Donation</button>
+    </form>
+</body>
+</html>
