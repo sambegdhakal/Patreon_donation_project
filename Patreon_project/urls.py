@@ -18,6 +18,7 @@ from django.contrib import admin
 from django.urls import path, include
 from registration.views import userregister #from views.py import userregister function; from registration app
 from login.views import login #from views.py import login function; from login app
+from subscription.views import patreon_page_subscription, view_page_subscription
 from donation.views import patreon_page_donation, view_page_amt 
 from django.conf.urls.static import static
 from django.conf import settings
@@ -29,5 +30,7 @@ urlpatterns = [
     path("page/", include("page.urls")),
     path("image/", include("images.urls")),
     path("pagedonation/<int:userid>/<int:pageid>/", patreon_page_donation, name= "patreon_page_donation"),
-    path("pageamt/<int:pageid>/", view_page_amt, name= "view_page_amt")		
+    path("pageamt/<int:pageid>/", view_page_amt, name= "view_page_amt"),
+    path("pagesubscription/<int:userid>/<int:pageid>/<str:date>/", patreon_page_subscription, name= "patreon_page_subscription"),
+    path("subscriptionview/<int:pageid>/", view_page_subscription, name= "view_page_subscription"),		
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

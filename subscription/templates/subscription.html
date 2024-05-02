@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Subscribe</title>
+</head>
+<body>
+    <h2>Donate</h2>
+    <form id="subscriptionForm" method="post">
+        {% csrf_token %}
+        <label for="amt">Please add price:</label><br>
+        <input type="number" id="amt" name="amt" required><br>
+        <input type="hidden" id="userid" name="userid" value="{{ userid }}">
+        <input type="hidden" id="pageid" name="pageid" value="{{ pageid }}">
+	<input type="hidden" id="date" name="date" value="{{ date }}">
+        <button type="submit">Submit</button>
+    </form>
+</body>
+</html>

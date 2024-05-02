@@ -80,15 +80,3 @@ def patreon_page_delete(request, id):
         response= JsonResponse({'id':id ,'msg':"deleted"})
         response["Access-Control-Allow-Origin"] = "http://localhost:3000"
         return response
-
-
-@csrf_exempt
-def subscribe_to_page(request, id, userid):
-    if request.method == 'POST':
-        page = PatreonPage.objects.get(id=id)
-        page.subscriber_count += 1
-        page.save()
-        user = PatreonUser.objects.get(userid=userid)
-        response = JsonResponse({'pageid':id ,'msg':"Subscribed"})
-        response["Access-Control-Allow-Origin"] = "http://localhost:3000"
-        return response

@@ -10,7 +10,6 @@ class PatreonPage(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     banner_image = models.ForeignKey(Image, on_delete=models.CASCADE, null=True)
-    subscriber_count = models.IntegerField(default=0)
 
     def __str__(self):
         return self.title
