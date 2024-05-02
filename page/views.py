@@ -1,5 +1,3 @@
-# Create your views here.
-from django.shortcuts import render, redirect, get_object_or_404
 from .models import PatreonPage
 from registration.models import PatreonUser
 from images.models import Image
@@ -13,31 +11,45 @@ Returns: {
     'id': integer, 
     'title': string, 
     'description': string, 
+    'creatorid': integer,
     'creator_username': string, 
-    'imageid': integer,
-    'creator_profile_id': integer
+    'creator_profile_id': integer,
+    'imageid': integer
 }
 """
-def patreon_page_list(request, id):
+def patreon_page_view(request, id):
     if (request.method != "GET"):
         return HttpResponseNotAllowed(["GET"])
     
-    user = PatreonUser.objects.get(userid=id)
     try:
+        user = PatreonUser.objects.get(userid=id)
         page = PatreonPage.objects.get(creator=user)
 
         data = {
             'id': page.id, 
             'title': page.title, 
             'description': page.description, 
+            'creatorid': page.creator.userid,
             'creator_username': page.creator.username, 
-            'imageid': page.banner_image.id,
-            'creator_profile_id': page.creator.profile_image.id
+            'creator_profile_id': page.creator.profile_image.id,
+            'imageid': page.banner_image.id
         }
-        
         return JsonResponse(data, safe=False)
     except PatreonPage.DoesNotExist:
         return HttpResponseNotFound()
+    except PatreonUser.DoesNotExist:
+        return HttpResponseNotFound()
+    
+
+def patreon_page_list(request, username):
+    users = PatreonUser.objects.filter(username__icontains=username)
+    pages = PatreonPage.objects.filter(creator__in=users)
+    data = [{'id': page.id, 'title':page.title, 'description': page.description, 'creator_username': page.creator.username,
+             'creatorid': page.creator.userid, 'creator_profile_id': page.creator.profile_image.id, 'imageid': page.banner_image.id}
+            for page in pages]
+    response = JsonResponse(data, safe=False)
+    response["Access-Control-Allow-Origin"] = "http://localhost:3000"
+    return response
     
 
 """
@@ -52,9 +64,10 @@ Returns: {
     'id': integer, 
     'title': string, 
     'description': string, 
+    'creatorid': integer,
     'creator_username': string, 
-    'imageid: integer',
-    'creator_profile_id': integer
+    'creator_profile_id': integer,
+    'imageid': integer
 }
 
 Returns 409 if an associated page already exists
@@ -89,9 +102,10 @@ def patreon_page_create(request, userid):
         'id': page.id, 
         'title': page.title, 
         'description': page.description, 
+        'creatorid': page.creator.userid,
         'creator_username': page.creator.username, 
-        'imageid': image.id,
-        'creator_profile_id': page.creator.profile_image.id
+        'creator_profile_id': page.creator.profile_image.id,
+        'imageid': image.id
     }
     return JsonResponse(data, safe=False)
 
@@ -145,18 +159,6 @@ def patreon_page_delete(request, id):
         return HttpResponseNotAllowed(["DELETE"])
     
     PatreonPage.objects.get(id=id).delete()
-    return HttpResponse()
-
-
-def patreon_page_donation(request, pageid, userid):
-    if request.method != "POST":
-        return HttpResponseNotAllowed(["POST"])
-    
-    page = PatreonPage.objects.get(id=pageid)
-    donation_amount = request.POST.get('donation_amt')
-    page.current_amount = page.current_amount + int(donation_amount)
-    page.save()
-
     return HttpResponse()
 
 
