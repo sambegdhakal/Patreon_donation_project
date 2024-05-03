@@ -160,14 +160,3 @@ def patreon_page_delete(request, id):
     
     PatreonPage.objects.get(id=id).delete()
     return HttpResponse()
-
-
-def subscribe_to_page(request, pageid, userid):
-    if request.method != "POST":
-        return HttpResponseNotAllowed(["POST"])
-
-    page = PatreonPage.objects.get(id=pageid)
-    page.subscriber_count += 1
-    page.save()
-
-    return HttpResponse()
