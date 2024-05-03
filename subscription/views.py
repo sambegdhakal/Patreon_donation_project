@@ -17,8 +17,11 @@ def patreon_page_subscription(request, userid, pageid, date):
             subscription = PatreonSubscription.objects.create(pagesub=page, subuser=user)
 
         subscription.price= subscription.price + int(amount)
-        subdate = datetime.datetime.strptime(date, "%Y-%m-%d").date()
-        subscription.date= subdate
+        try: 
+            subdate = datetime.datetime.strptime(date, "%Y-%m-%d").date()
+            subscription.date= subdate
+        except:
+            pass
         subscription.save()
         response = JsonResponse({'userid':userid ,'pageid':pageid ,'msg':"subscription done",'price': amount, 'dateClosed': date})
         response["Access-Control-Allow-Origin"] = "http://localhost:3000"
